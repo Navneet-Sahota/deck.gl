@@ -1,16 +1,16 @@
 // Converts JSON to props ("hydrating" classes, resolving enums and functions etc).
 // TODO - Currently converts in place, might be clearer to convert to separate structure
 
-import {shallowEqualObjects} from '../utils/shallow-equal-objects.js';
-import parseJSON from '../parsers/parse-json';
-import {convertTopLevelJSON} from '../parsers/convert-json';
+import parseJSON from '../json-converter/parse-json';
+import convertJSON from './convert-json';
 
 export default class JSONConverter {
   constructor(props) {
     this.configuration = {};
     this.onJSONChange = () => {};
-    // this._onViewStateChange = this._onViewStateChange.bind(this);
     this.setProps(props);
+    this.json = null;
+    this.convertedJson = null;
   }
 
   finalize() {}
@@ -26,36 +26,28 @@ export default class JSONConverter {
     }
   }
 
-  convertJsonToDeckProps(json) {
-    // Use shallow equality to Ensure we only convert once
+  convertJson(json) {
+    // Use shallow equality to ensure we only convert same json once
     if (!json || json === this.json) {
-      return this.deckProps;
+      return this.convertedJson;
     }
+    // Save json for shallow diffing
     this.json = json;
 
     // Accept JSON strings by parsing them
     const parsedJSON = parseJSON(json);
 
     // Convert the JSON
-    const jsonProps = convertTopLevelJSON(parsedJSON, this.configuration);
+    let convertedJson = convertJSON(parsedJSON, this.configuration);
 
-    // Handle `json.initialViewState`
-    // If we receive new JSON we need to decide if we should update current view state
-    // Current heuristic is to compare with last `initialViewState` and only update if changed
-    if ('initialViewState' in jsonProps) {
-      const updateViewState =
-        !this.initialViewState ||
-        !shallowEqualObjects(jsonProps.initialViewState, this.initialViewState);
+    convertedJson = this.postProcessConvertedJson(convertedJson);
 
-      if (updateViewState) {
-        jsonProps.viewState = jsonProps.initialViewState;
-        this.initialViewState = jsonProps.initialViewState;
-      }
+    this.convertedJson = convertedJson;
+    return convertedJson;
+  }
 
-      delete jsonProps.initialViewState;
-    }
-
-    this.deckProps = jsonProps;
-    return jsonProps;
+  // Let subclass post process
+  postProcessConvertedJson(convertedJson) {
+    return convertedJson;
   }
 }

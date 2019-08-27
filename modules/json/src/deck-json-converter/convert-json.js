@@ -11,11 +11,11 @@
 import {log} from '@deck.gl/core';
 
 import {MapView, FirstPersonView, OrbitView, OrthographicView} from '@deck.gl/core';
-import JSONLayer from '../json-layer/json-layer';
+import JSONLayer from './json-layer';
 
-import parseStringExpression from './parse-string-expression';
+import parseExpressionString from '../json-converter/parse-expression-string';
 // TODO - replace with loaders.gl
-import enhancedFetch from './enhanced-fetch';
+import enhancedFetch from '../json-converter/enhanced-fetch';
 
 // Support all `@deck.gl/core` Views by default
 const DEFAULT_VIEW_CATALOG = {MapView, FirstPersonView, OrbitView, OrthographicView};
@@ -139,10 +139,10 @@ function getJSONLayerProps(Layer, jsonProps, configuration) {
       switch (type) {
         case 'accessor':
           const isAccessor = true;
-          propValue = parseStringExpression(propValue, configuration, isAccessor);
+          propValue = parseExpressionString(propValue, configuration, isAccessor);
           break;
         case 'function':
-          propValue = parseStringExpression(propValue, configuration);
+          propValue = parseExpressionString(propValue, configuration);
           break;
         default:
       }

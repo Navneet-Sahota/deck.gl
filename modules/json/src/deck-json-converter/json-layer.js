@@ -1,5 +1,5 @@
 import {CompositeLayer} from '@deck.gl/core';
-import {getJSONLayers} from '../parsers/convert-json';
+import {getJSONLayers} from './convert-json';
 
 const defaultProps = {
   // Optionally accept JSON strings by parsing them
