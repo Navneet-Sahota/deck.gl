@@ -2,7 +2,7 @@ import test from 'tape-catch';
 import {Deck} from '@deck.gl/core';
 import {_JSONConverter as JSONConverter} from '@deck.gl/json';
 
-import {configuration, JSON_DATA} from './json-converter.spec';
+import {configuration, JSON_DATA} from './deck-json-converter.spec';
 
 test('JSONConverter#render', t => {
   const jsonConverter = new JSONConverter({configuration});
