@@ -10,46 +10,31 @@
 
 import {log} from '@deck.gl/core';
 
-import {MapView, FirstPersonView, OrbitView, OrthographicView} from '@deck.gl/core';
 import JSONLayer from './json-layer';
 
-import parseExpressionString from '../json-converter/parse-expression-string';
 // TODO - replace with loaders.gl
+import parseExpressionString from '../json-converter/parse-expression-string';
 import enhancedFetch from '../json-converter/enhanced-fetch';
+import convertJSON from '../json-converter/convert-json';
 
-// Support all `@deck.gl/core` Views by default
-const DEFAULT_VIEW_CATALOG = {MapView, FirstPersonView, OrbitView, OrthographicView};
-
-const DEFAULT_MAP_PROPS = {
-  style: 'mapbox://styles/mapbox/light-v9'
-};
+export const DEFAULT_MAP_PROPS = {style: 'mapbox://styles/mapbox/light-v9'};
 
 // Converts JSON to props ("hydrating" classes, resolving enums and functions etc).
-export function convertTopLevelJSON(json, configuration) {
-  // TODO - Currently converts "in place", might be clearer to convert to separate structure
-  const jsonProps = json;
+export function convertDeckJSON(json, configuration) {
+  const jsonProps = convertJSON(json, configuration);
 
-  // Convert "JSON layers" in `json.layers` into class instances
-  if (jsonProps.layers) {
-    jsonProps.layers = convertJSONLayers(json.layers, configuration);
-  }
-
-  // Convert "JSON views" in `json.views` into class instances
-  if (jsonProps.views) {
-    jsonProps.views = convertJSONViews(json.views, configuration);
-  }
-
+  // Normalize deck props
   if ('initialViewState' in jsonProps) {
     jsonProps.viewState = jsonProps.viewState || jsonProps.initialViewState;
   }
 
-  convertJSONMapProps(jsonProps, configuration);
+  normalizeMapProps(jsonProps, configuration);
 
   return jsonProps;
 }
 
 // Normalizes map/mapStyle etc props to a `map: {style}` object-valued prop
-function convertJSONMapProps(jsonProps, configuration) {
+function normalizeMapProps(jsonProps, configuration) {
   if (jsonProps.map || jsonProps.mapStyle) {
     jsonProps.map = Object.assign({}, DEFAULT_MAP_PROPS, jsonProps.map);
   }
@@ -70,45 +55,6 @@ function convertJSONMapProps(jsonProps, configuration) {
   }
 }
 
-// Use the composite JSONLayer to render any JSON layers
-function convertJSONLayers(jsonLayers, configuration) {
-  for (const layer of jsonLayers) {
-    if (!configuration.layers[layer.type]) {
-      log.warn(`Unknown layer ${layer.type}`)();
-    }
-  }
-  return [
-    new JSONLayer({
-      data: jsonLayers,
-      configuration
-    })
-  ];
-}
-
-// Instantiates views: `{type: MapView, ...props}` to `MapView(...props)`
-function convertJSONViews(jsonViews, configuration) {
-  if (!jsonViews) {
-    return jsonViews;
-  }
-
-  const viewCatalog = configuration.views || {};
-
-  jsonViews = Array.isArray(jsonViews) ? jsonViews : [jsonViews];
-  return jsonViews
-    .map(jsonView => {
-      // Try to find a view definition
-      const View = viewCatalog[jsonView.type] || DEFAULT_VIEW_CATALOG[jsonView.type];
-      // Instantiate it
-      if (View) {
-        const viewProps = Object.assign({}, jsonView);
-        delete viewProps.type;
-        return new View(viewProps);
-      }
-      return null;
-    })
-    .filter(Boolean);
-}
-
 // LAYERS
 
 // Replaces accessor props
@@ -118,7 +64,6 @@ export function getJSONLayers(jsonLayers = [], configuration) {
   return jsonLayers.map(jsonLayer => {
     const Layer = layerCatalog[jsonLayer.type];
     const props = getJSONLayerProps(Layer, jsonLayer, configuration);
-    props.fetch = enhancedFetch;
     return Layer && new Layer(props);
   });
 }

@@ -8,7 +8,7 @@ test('JSONConverter#render', t => {
   const jsonConverter = new JSONConverter({configuration});
   t.ok(jsonConverter, 'JSONConverter created');
 
-  const deckProps = jsonConverter.convertJsonToDeckProps(JSON_DATA);
+  const deckProps = jsonConverter.convertJson(JSON_DATA);
   t.ok(deckProps, 'JSONConverter converted correctly');
 
   const jsonDeck = new Deck(

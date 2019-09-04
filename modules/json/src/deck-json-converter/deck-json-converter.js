@@ -9,23 +9,23 @@ export default class DeckJSONConverter extends JSONConverter {
     super(props);
   }
 
-  postProcessConvertedJson(convertedJson) {
+  postProcessConvertedJson(json) {
     // Handle `json.initialViewState`
     // If we receive new JSON we need to decide if we should update current view state
     // Current heuristic is to compare with last `initialViewState` and only update if changed
-    if ('initialViewState' in convertedJson) {
+    if ('initialViewState' in json) {
       const updateViewState =
         !this.initialViewState ||
-        !shallowEqualObjects(convertedJson.initialViewState, this.initialViewState);
+        !shallowEqualObjects(json.initialViewState, this.initialViewState);
 
       if (updateViewState) {
-        convertedJson.viewState = convertedJson.initialViewState;
-        this.initialViewState = convertedJson.initialViewState;
+        json.viewState = json.initialViewState;
+        this.initialViewState = json.initialViewState;
       }
 
-      delete convertedJson.initialViewState;
+      delete json.initialViewState;
     }
 
-    return convertedJson;
+    return json;
   }
 }

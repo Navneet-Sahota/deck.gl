@@ -18,16 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import './imports-spec';
-import './core';
+// import './imports-spec';
+// import './core';
 
-import './layers';
-import './aggregation-layers';
-import './geo-layers';
+// import './layers';
+// import './aggregation-layers';
+// import './geo-layers';
 
-import './google-maps';
-import './mapbox';
+// import './google-maps';
+// import './mapbox';
 import './json';
-import './react';
+// import './react';
 import './jupyter-widget';
-import './extensions';
+// import './extensions';

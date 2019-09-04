@@ -100,7 +100,7 @@ export default class App extends Component {
   // Updates deck.gl JSON props
   // Called on init, when template is changed, or user types
   _setJSON(json) {
-    const jsonProps = this.jsonConverter.convertJsonToDeckProps(json);
+    const jsonProps = this.jsonConverter.convertJson(json);
     this.setState({
       jsonProps,
       viewState: jsonProps.viewState
