@@ -5,7 +5,7 @@ import GL from '@luma.gl/constants';
 // Support all `@deck.gl/core` Views by default
 const DEFAULT_VIEW_CATALOG = {MapView, FirstPersonView, OrbitView, OrthographicView};
 
-export function getDeckConfiguration(configuration = {}) {
+export function getDeckJSONConfiguration(configuration = {}) {
   return Object.assign({}, configuration, {
     classes: Object.assign(DEFAULT_VIEW_CATALOG, configuration.classes),
     enumerations: Object.assign({COORDINATE_SYSTEM, GL}, configuration.enumerations)
