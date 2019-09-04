@@ -1,7 +1,8 @@
 import test from 'tape-catch';
 
 import {makeSpy} from '@probe.gl/test-utils';
-import {_JSONConverter as JSONConverter, _JSONLayer as JSONLayer} from '@deck.gl/json';
+import {_JSONConverter as JSONConverter} from '@deck.gl/json';
+// import {_JSONLayer as JSONLayer} from '@deck.gl/json';
 
 import {log} from '@deck.gl/core';
 

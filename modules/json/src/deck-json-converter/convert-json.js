@@ -8,13 +8,7 @@
 // * Optionally, error checking could be applied, but ideally should leverage
 //   non-JSON specific mechanisms like prop types.
 
-import {log} from '@deck.gl/core';
-
-import JSONLayer from './json-layer';
-
-// TODO - replace with loaders.gl
 import parseExpressionString from '../json-converter/parse-expression-string';
-import enhancedFetch from '../json-converter/enhanced-fetch';
 import convertJSON from '../json-converter/convert-json';
 
 export const DEFAULT_MAP_PROPS = {style: 'mapbox://styles/mapbox/light-v9'};
